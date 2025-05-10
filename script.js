@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyDmAl6Sm52GENTGcKAQv9kw2MtgzzyA60k";
+const API_KEY = "AIzaSyBxo1EBv3S7hC2FkToEfPrINMn-27Vx3Ek";
 
 async function generateScript() {
   const emotion = document.getElementById("emotion").value;

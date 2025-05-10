@@ -1,47 +1,46 @@
-const API_KEY = "AIzaSyBxo1EBv3S7hC2FkToEfPrINMn-27Vx3Ek";
-
 async function generateScript() {
   const emotion = document.getElementById("emotion").value;
-  
-  console.log("Emotion selected: ", emotion);  // Check what emotion is selected
-  
+
+  console.log("Emotion selected: ", emotion);
+
   if (!emotion) {
     alert("Please select an emotion.");
     return;
   }
 
   const prompt = `Generate a short Instagram reel script in Hindi and English, with an emotional tone based on "${emotion}". Also include a matching image prompt for AI image generation and background music suggestion (song or instrumental).`;
-  
-  console.log("Sending request to API with prompt: ", prompt);  // Check the prompt being sent
 
-  const response = await fetch(
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + API_KEY,
-    {
+  console.log("Sending request to API with prompt: ", prompt);
+
+  try {
+    const response = await fetch("/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-      }),
+      body: JSON.stringify({ prompt }),
+    });
+
+    const data = await response.json();
+    console.log("API Response: ", data);
+
+    const output = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!output) {
+      throw new Error("Empty or invalid response");
     }
-  );
 
-  const data = await response.json();
-  
-  console.log("API Response: ", data);  // Log the API response for debugging
+    const [script, imagePrompt, music] = output
+      .split(/Image Prompt:|Music Suggestion:/)
+      .map((x) => x.trim());
 
-  try {
-    const output = data.candidates[0].content.parts[0].text;
-    const [script, imagePrompt, music] = output.split(/Image Prompt:|Music Suggestion:/).map(x => x.trim());
-
-    console.log("Script: ", script);  // Log the generated script
-    console.log("Image Prompt: ", imagePrompt);  // Log the image prompt
-    console.log("Music Suggestion: ", music);  // Log the music suggestion
+    console.log("Script: ", script);
+    console.log("Image Prompt: ", imagePrompt);
+    console.log("Music Suggestion: ", music);
 
     document.getElementById("script").innerText = script.replace("Script:", "").trim();
-    document.getElementById("imagePrompt").innerText = imagePrompt;
-    document.getElementById("musicSuggestion").innerText = music;
+    document.getElementById("imagePrompt").innerText = imagePrompt || "-";
+    document.getElementById("musicSuggestion").innerText = music || "-";
   } catch (err) {
     console.error("Error while processing response: ", err);
     document.getElementById("script").innerText = "Something went wrong or incomplete response.";

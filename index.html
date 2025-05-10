@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EmotiScript.in - Reel Script Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>EmotiScript.in</h1>
+    <p>Emotion to Reel Script Generator (Hindi + English)</p>
+
+    <select id="emotion">
+      <option value="">Select Emotion</option>
+      <option value="love">Love</option>
+      <option value="sadness">Sadness</option>
+      <option value="motivation">Motivation</option>
+      <option value="mother">Mother</option>
+      <option value="struggle">Struggle</option>
+    </select>
+
+    <button onclick="generateScript()">Generate</button>
+
+    <div id="output">
+      <h2>Generated Output:</h2>
+      <p><strong>Script:</strong> <span id="script"></span></p>
+      <p><strong>Image Prompt:</strong> <span id="imagePrompt"></span></p>
+      <p><strong>Music Suggestion:</strong> <span id="musicSuggestion"></span></p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

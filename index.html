@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>EmotiScript.in - Reel Generator</title>
+  <title>EmotiScript.in - Emotion to Reel Script Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
+      background-color: #f2f2f2;
     }
     select, button {
       padding: 10px;
@@ -17,27 +18,27 @@
       width: 100%;
     }
     .output {
-      background: #f9f9f9;
-      padding: 15px;
+      background: #fff;
+      padding: 20px;
       border-radius: 8px;
-      margin-top: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 {
-      margin-top: 30px;
+    h1, h2 {
+      color: #333;
     }
   </style>
 </head>
 <body>
   <h1>EmotiScript.in</h1>
-  <p>Emotion to Reel Script Generator (Hindi + English)</p>
+  <p>Select an emotion and get your custom reel script with AI.</p>
 
   <select id="emotion">
     <option value="">-- Select Emotion --</option>
     <option value="love">Love</option>
     <option value="sadness">Sadness</option>
-    <option value="hope">Hope</option>
-    <option value="inspiration">Inspiration</option>
-    <option value="mother-child bond">Mother-Child Bond</option>
+    <option value="motivation">Motivation</option>
+    <option value="mother">Mother</option>
+    <option value="struggle">Struggle</option>
   </select>
 
   <button onclick="generateScript()">Generate Script</button>
@@ -54,7 +55,7 @@
   </div>
 
   <script>
-    const API_KEY = "AIzaSyDmAl6Sm52GENTGcKAQv9kw2MtgzzyA60k"; // Replace here
+    const API_KEY = "AIzaSyDmAl6Sm52GENTGcKAQv9kw2MtgzzyA60k";
 
     async function generateScript() {
       const emotion = document.getElementById("emotion").value;
@@ -63,11 +64,7 @@
         return;
       }
 
-      const prompt = `Generate Instagram reel content in Hindi + English based on the emotion: "${emotion}". 
-Format like this:
-Script: ...
-Image Prompt: ...
-Music Suggestion: ...`;
+      const prompt = `Emotion: ${emotion}\nGenerate a short Instagram reel script in Hindi and English with emotional tone.\nFormat:\nScript:\n...\nImage Prompt:\n...\nMusic Suggestion:\n...`;
 
       try {
         const response = await fetch(
@@ -85,24 +82,22 @@ Music Suggestion: ...`;
 
         const data = await response.json();
 
-        if (!data.candidates || !data.candidates[0]) {
-          throw new Error("Invalid response");
+        if (!data.candidates || !data.candidates.length) {
+          throw new Error("No response from Gemini API");
         }
 
         const output = data.candidates[0].content.parts[0].text;
-
-        const [script, imagePrompt, music] = output
-          .split(/Image Prompt:|Music Suggestion:/)
-          .map((x) => x.trim());
+        const [script, imagePrompt, music] = output.split(/Image Prompt:|Music Suggestion:/).map(s => s.trim());
 
         document.getElementById("script").innerText = script.replace("Script:", "").trim();
-        document.getElementById("imagePrompt").innerText = imagePrompt;
-        document.getElementById("musicSuggestion").innerText = music;
-      } catch (err) {
+        document.getElementById("imagePrompt").innerText = imagePrompt || "-";
+        document.getElementById("musicSuggestion").innerText = music || "-";
+
+      } catch (error) {
         document.getElementById("script").innerText = "Something went wrong or incomplete response.";
         document.getElementById("imagePrompt").innerText = "-";
         document.getElementById("musicSuggestion").innerText = "-";
-        console.error(err);
+        console.error("Error:", error);
       }
     }
   </script>

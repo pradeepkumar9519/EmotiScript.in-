@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 
 export default function Home() {
@@ -23,16 +24,21 @@ export default function Home() {
       });
 
       const data = await res.json();
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Something went wrong or incomplete response.';
-      
-      const [scriptPart, imagePart, musicPart] = text.split('Image Prompt:');
-      const [mainScript, rest] = scriptPart.split('Script:');
-      const [img, music] = rest?.split('Music Suggestion:') || [];
+      if (res.ok) {
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Incomplete response.';
+        const [scriptPart, imagePart, musicPart] = text.split('Image Prompt:');
+        const [mainScript, rest] = scriptPart.split('Script:');
+        const [img, music] = rest?.split('Music Suggestion:') || [];
 
-      setScript((mainScript || '').trim() + "\n" + (img || '').trim());
-      setImagePrompt((img || '').trim());
-      setMusicSuggestion((music || '').trim());
+        setScript((mainScript || '').trim() + "\n" + (img || '').trim());
+        setImagePrompt((img || '').trim());
+        setMusicSuggestion((music || '').trim());
+      } else {
+        console.error('Error:', data);
+        setScript('Something went wrong while fetching the data.');
+      }
     } catch (error) {
+      console.error('Request failed', error);
       setScript('Something went wrong.');
     }
 

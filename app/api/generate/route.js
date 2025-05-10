@@ -1,23 +1,27 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <h2>Test Gemini API</h2>
-    <button onclick="testAPI()">Run Test</button>
-    <pre id="output"></pre>
+export async function POST(req) {
+  const { prompt } = await req.json();
 
-    <script>
-      async function testAPI() {
-        const prompt = "Generate a short emotional Instagram reel script in Hindi and English based on 'hope'. Also include image prompt and music suggestion.";
+  const GEMINI_API_KEY = "AIzaSyBxo1EBv3S7hC2FkToEfPrINMn-27Vx3Ek";
 
-        const res = await fetch("/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt }),
-        });
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: prompt }],
+          },
+        ],
+      }),
+    }
+  );
 
-        const data = await res.json();
-        document.getElementById("output").textContent = JSON.stringify(data, null, 2);
-      }
-    </script>
-  </body>
-</html>
+  const data = await response.json();
+  return new Response(JSON.stringify(data), {
+    headers: { 'Content-Type': 'application/json' },
+  });
+}

@@ -1,0 +1,33 @@
+const API_KEY = "AIzaSyBA3sRkWzMOzYB-WQuVq4BOq8dnywUrZPg";
+
+async function generateScript() {
+  const emotion = document.getElementById("emotion").value;
+  if (!emotion) {
+    alert("Please select an emotion.");
+    return;
+  }
+
+  const prompt = `Generate a short Instagram reel script in Hindi and English, with an emotional tone based on "${emotion}". Also include a matching image prompt for AI image generation and background music suggestion (song or instrumental).`;
+
+  const response = await fetch(
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + API_KEY,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    }
+  );
+
+  const data = await response.json();
+  const output = data.candidates[0].content.parts[0].text;
+
+  const [script, imagePrompt, music] = output.split(/Image Prompt:|Music Suggestion:/).map(x => x.trim());
+
+  document.getElementById("script").innerText = script.replace("Script:", "").trim();
+  document.getElementById("imagePrompt").innerText = imagePrompt;
+  document.getElementById("musicSuggestion").innerText = music;
+}

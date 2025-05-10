@@ -23,11 +23,18 @@ async function generateScript() {
   );
 
   const data = await response.json();
-  const output = data.candidates[0].content.parts[0].text;
 
-  const [script, imagePrompt, music] = output.split(/Image Prompt:|Music Suggestion:/).map(x => x.trim());
+  try {
+    const output = data.candidates[0].content.parts[0].text;
+    const [script, imagePrompt, music] = output.split(/Image Prompt:|Music Suggestion:/).map(x => x.trim());
 
-  document.getElementById("script").innerText = script.replace("Script:", "").trim();
-  document.getElementById("imagePrompt").innerText = imagePrompt;
-  document.getElementById("musicSuggestion").innerText = music;
+    document.getElementById("script").innerText = script.replace("Script:", "").trim();
+    document.getElementById("imagePrompt").innerText = imagePrompt;
+    document.getElementById("musicSuggestion").innerText = music;
+  } catch (err) {
+    document.getElementById("script").innerText = "Something went wrong or incomplete response.";
+    document.getElementById("imagePrompt").innerText = "-";
+    document.getElementById("musicSuggestion").innerText = "-";
+    console.error(data);
+  }
 }
